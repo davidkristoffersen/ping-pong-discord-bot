@@ -1,5 +1,4 @@
 from random import randint
-import qanda
 import requests
 import json
 import html
@@ -27,6 +26,7 @@ class Commands():
             'yay_nay': (self.yay_nay, ''),
             'calc': (self.calc, '[math expression]'),
             'qa': (self.qa, ''),
+            'even': (self.even, ''),
         }
 
         self.prefix = "p!"
@@ -57,32 +57,6 @@ class Commands():
 
     def test(self):
         return "This is a test response change"
-
-    def qa(self):
-        query = self.cmd_args_string
-        try:
-            ret = ''
-            url = 'https://api.stackexchange.com/2.2/search/advanced?pagesize=1&order=desc&sort=activity&site=stackoverflow&filter=!2)zABJ)ZvP_ub7H(QhxI5&q=' + parse.quote_plus(query)
-            question_data = json.loads(requests.get(url).text)
-            quota_remaining = question_data['quota_remaining']
-            question_data = question_data['items'][0]
-
-            ret += underline(bold(question_data['title'])) + '\n'
-            ret += question_data['link'] + '\n'
-
-            answer_id = question_data['accepted_answer_id']
-
-            url = 'https://api.stackexchange.com/2.2/answers/' + str(answer_id) + '?order=desc&sort=activity&site=stackoverflow&filter=!WXiXcHJ.E8QbM5nB9O-ckRJ6Qj.)-FZuxrzlSGf'
-            answer_data = json.loads(requests.get(url).text)['items'][0]
-            answer_owner = answer_data['owner']
-
-            ret += italic(answer_owner['display_name'] + ' with reputation ' + str(answer_owner['reputation']) + ' wrote this answer with score ' + str(answer_data['score']) + ':' + '\n' + '\n')
-            body = html.unescape(answer_data['body_markdown'])
-            ret += body
-            ret += 'Number of requests left: ' + bold(str(quota_remaining))
-            return ret
-        except:
-            return 'No result or maybe the bot is broken'
 
     def color(self):
         try:
@@ -122,6 +96,9 @@ class Commands():
     def david(self):
         return "e deprimert..."
 
+    def even(self):
+        return "e trøtt \"_\""
+
     def roll(self):
         return randint(0, 100)
 
@@ -143,3 +120,29 @@ class Commands():
                 except:
                     return 'Invalid value: `' + val + '`'
         return eval(self.cmd_args_string)
+
+    def qa(self):
+        query = self.cmd_args_string
+        try:
+            ret = ''
+            url = 'https://api.stackexchange.com/2.2/search/advanced?pagesize=1&order=desc&sort=activity&site=stackoverflow&filter=!2)zABJ)ZvP_ub7H(QhxI5&q=' + parse.quote_plus(query)
+            question_data = json.loads(requests.get(url).text)
+            quota_remaining = question_data['quota_remaining']
+            question_data = question_data['items'][0]
+
+            ret += underline(bold(question_data['title'])) + '\n'
+            ret += question_data['link'] + '\n'
+
+            answer_id = question_data['accepted_answer_id']
+
+            url = 'https://api.stackexchange.com/2.2/answers/' + str(answer_id) + '?order=desc&sort=activity&site=stackoverflow&filter=!WXiXcHJ.E8QbM5nB9O-ckRJ6Qj.)-FZuxrzlSGf'
+            answer_data = json.loads(requests.get(url).text)['items'][0]
+            answer_owner = answer_data['owner']
+
+            ret += italic(answer_owner['display_name'] + ' with reputation ' + str(answer_owner['reputation']) + ' wrote this answer with score ' + str(answer_data['score']) + ':' + '\n' + '\n')
+            body = html.unescape(answer_data['body_markdown'])
+            ret += body
+            ret += 'Number of requests left: ' + bold(str(quota_remaining))
+            return ret
+        except:
+            return 'No result or maybe the bot is broken'
