@@ -4,13 +4,16 @@ import json
 import html
 from urllib import parse
 
-underline = lambda x: '__' + x + '__'
-bold = lambda x: '**' + x + '**'
-italic = lambda x: '*' + x + '*'
+
+def underline(x): return '__' + x + '__'
+def bold(x): return '**' + x + '**'
+def italic(x): return '*' + x + '*'
 
 #
 #   All available commands
 #
+
+
 class Commands():
     def __init__(self):
         self.cmds = {
@@ -43,7 +46,8 @@ class Commands():
 
         resp += 'Prefix: `' + self.prefix + '`\n\n'
         resp += 'Available commands:\n'
-        resp += '- ' + '\n- '.join(['`' + key + '` ' + val[1] for key, val in self.cmds.items()])
+        resp += '- ' + '\n- '.join(['`' + key + '` ' + val[1]
+                                   for key, val in self.cmds.items()])
         return resp
 
     def cmds(self):
@@ -61,16 +65,16 @@ class Commands():
     def color(self):
         try:
             colors = {
-                        'pre': '```',
-                        'red': 'excel\n',
-                        'green': 'css\n',
-                        'blue': 'elm\n',
+                'pre': '```',
+                'red': 'excel\n',
+                'green': 'css\n',
+                'blue': 'elm\n',
                         'yellow': 'http\n',
                         'orange': 'arm\n',
                         'cyan': 'yaml\n',
                         'brown': 'fix\n',
                         'post': '```'
-                     }
+            }
             col = self.cmd_args_list[0]
             msg = ' '.join(self.cmd_args_list[1:])
             return "Test of coloring: " + colors['pre'] + colors[col] + msg + colors['post']
@@ -103,7 +107,7 @@ class Commands():
         return randint(0, 100)
 
     def yay_nay(self):
-        return ['Yay! :)', 'Nay :('][randint(0,1)]
+        return ['Yay! :)', 'Nay :('][randint(0, 1)]
 
     def calc(self):
         ops = self.cmd_args_list[1::2]
@@ -125,7 +129,8 @@ class Commands():
         query = self.cmd_args_string
         try:
             ret = ''
-            url = 'https://api.stackexchange.com/2.2/search/advanced?pagesize=1&order=desc&sort=activity&site=stackoverflow&filter=!2)zABJ)ZvP_ub7H(QhxI5&q=' + parse.quote_plus(query)
+            url = 'https://api.stackexchange.com/2.2/search/advanced?pagesize=1&order=desc&sort=activity&site=stackoverflow&filter=!2)zABJ)ZvP_ub7H(QhxI5&q=' + parse.quote_plus(
+                query)
             question_data = json.loads(requests.get(url).text)
             quota_remaining = question_data['quota_remaining']
             question_data = question_data['items'][0]
@@ -135,11 +140,13 @@ class Commands():
 
             answer_id = question_data['accepted_answer_id']
 
-            url = 'https://api.stackexchange.com/2.2/answers/' + str(answer_id) + '?order=desc&sort=activity&site=stackoverflow&filter=!WXiXcHJ.E8QbM5nB9O-ckRJ6Qj.)-FZuxrzlSGf'
+            url = 'https://api.stackexchange.com/2.2/answers/' + \
+                str(answer_id) + '?order=desc&sort=activity&site=stackoverflow&filter=!WXiXcHJ.E8QbM5nB9O-ckRJ6Qj.)-FZuxrzlSGf'
             answer_data = json.loads(requests.get(url).text)['items'][0]
             answer_owner = answer_data['owner']
 
-            ret += italic(answer_owner['display_name'] + ' with reputation ' + str(answer_owner['reputation']) + ' wrote this answer with score ' + str(answer_data['score']) + ':' + '\n' + '\n')
+            ret += italic(answer_owner['display_name'] + ' with reputation ' + str(answer_owner['reputation']
+                                                                                   ) + ' wrote this answer with score ' + str(answer_data['score']) + ':' + '\n' + '\n')
             body = html.unescape(answer_data['body_markdown'])
             ret += body
             ret += 'Number of requests left: ' + bold(str(quota_remaining))

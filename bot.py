@@ -3,6 +3,7 @@
 import discord
 from commands import Commands
 
+
 class Bot(Commands):
     def __init__(self):
         super().__init__()
@@ -44,8 +45,13 @@ class Bot(Commands):
         self.response = None
         return ret
 
+
+def get_token():
+    raise NotImplementedError
+
+
 if __name__ == "__main__":
-    TOKEN = 'NTM3NjQzNjA3NTAzNTM2MTI4.Dyoorw.kZYgZa6M5bePpYfrNdwcP6nwk3E'
+    TOKEN = get_token()
 
     client = discord.Client()
 
@@ -60,7 +66,7 @@ if __name__ == "__main__":
 
         response = bot.get_response
         if not response:
-            return 
+            return
         await client.send_message(message.channel, response)
 
     @client.event
